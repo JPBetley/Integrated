@@ -55,7 +55,11 @@ trait WorksWithDatabase
         // work with the database.
 
         if (isset($this->app) || in_array('Laracasts\Integrated\Services\Laravel\Application', class_uses($this))) {
-            return $this->app['db']->table($table)->where($data)->count();
+            $db = $this->app['db'];
+            if (isset($this->connection)) {
+                $db = $db->connection($this->connection);
+            }
+            return $db->table($table)->where($data)->count();
         }
 
         // Otherwise, we'll default to the database adapter that Integrated provides.
